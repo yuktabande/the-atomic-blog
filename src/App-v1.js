@@ -18,7 +18,6 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isFakeDark, setIsFakeDark] = useState(false);
 
-  // Derived state. These are the posts that will actually be displayed
   const searchedPosts =
     searchQuery.length > 0
       ? posts.filter((post) =>
@@ -36,13 +35,9 @@ function App() {
     setPosts([]);
   }
 
-  // Whenever `isFakeDark` changes, we toggle the `fake-dark-mode` class on the HTML element (see in "Elements" dev tool).
-  useEffect(
-    function () {
-      document.documentElement.classList.toggle("fake-dark-mode");
-    },
-    [isFakeDark]
-  );
+  useEffect(() => {
+    document.documentElement.classList.toggle("fake-dark-mode");
+  }, [isFakeDark]);
 
   return (
     // 2) PROVIDE VALUE TO CHILD COMPONENTS
@@ -104,7 +99,6 @@ function SearchPosts() {
 
 function Results() {
   const { posts } = useContext(PostContext);
-
   return <p>🚀 {posts.length} atomic posts found</p>;
 }
 
@@ -130,7 +124,7 @@ function FormAddPost() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
-  const handleSubmit = function (e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!body || !title) return;
     onAddPost({ title, body });
@@ -173,9 +167,7 @@ function List() {
 function Archive() {
   const { onAddPost } = useContext(PostContext);
 
-  // Here we don't need the setter function. We're only using state to store these posts because the callback function passed into useState (which generates the posts) is only called once, on the initial render. So we use this trick as an optimization technique, because if we just used a regular variable, these posts would be re-created on every render. We could also move the posts outside the components, but I wanted to show you this trick 😉
   const [posts] = useState(() =>
-    // 💥 WARNING: This might make your computer slow! Try a smaller `length` first
     Array.from({ length: 10000 }, () => createRandomPost())
   );
 
